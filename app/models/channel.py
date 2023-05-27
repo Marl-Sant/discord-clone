@@ -23,7 +23,7 @@ class Channel(db.Model):
     updated_at = db.Column(db.Date, default = datetime.datetime.now())
 
     members = db.relationship('ChannelMember', backref='channel', cascade='all, delete-orphan')
-    messages = db.relationship('ChannelMessage', backref='channel',cascade="all, delete-orphan")
+    messages = db.relationship('ChannelMessage', backref='channel',cascade='all, delete-orphan')
 
     def to_dict(self):
         return {
