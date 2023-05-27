@@ -7,6 +7,11 @@ from .db import db, environment, SCHEMA, add_prefix_for_prod
 import datetime
 
 class Channel(db.Model):
+    '''
+    RELETIONSHIPS:
+    member from User Model
+    server from Server Model
+    '''
     __tablename__ = 'channels'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -25,21 +30,26 @@ class Channel(db.Model):
             'id': self.id,
             'name': self.name,
             'serverId': self.server_id,
-            'messages': {message.id:message.to_dict() for message in self.messages},
             'members': {member.user_id: member.to_dict() for member in self.members},
+            'messages': {message.id:message.to_dict() for message in self.messages},
             'dmChannel': self.dm_channel,
-            'membersLength': len(self.members)
+            'numOfMembers': len(self.members)
         }
-    def to_alt_dict(self):
+    def to_socket_dict(self):
         return {
             'id': self.id,
             'name': self.name,
             'serverId': self.server_id,
             'dmChannel': self.dm_channel,
-            'membersLength': len(self.members)
+            'numOfMembers': len(self.members)
         }
 
 class ChannelMember(db.Model):
+    '''
+    RELETIONSHIPS:
+    member from User Model
+
+    '''
     __tablename__ = 'channelMembers'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -51,21 +61,26 @@ class ChannelMember(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'channelId': self.channel_id,
             'userId': self.user_id,
             'username':self.member.username,
+            'channelId': self.channel_id,
             'profilePic': self.member.profile_pic,
         }
 
 
 class ChannelMessage(db.Model):
+    '''
+    RELETIONSHIPS:
+    sender from User Model
+
+    '''
     __tablename__ = 'channelMessages'
 
     id = db.Column(db.Integer, primary_key=True)
     channel_id = db.Column(db.Integer, db.ForeignKey('channels.id'))
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    content = db.Column(db.String(2000), nullable=False)
-    picture = db.Column(db.String(2000))
+    content = db.Column(db.String(1500), nullable=False)
+    picture = db.Column(db.String(2500))
     created_at = db.Column(db.Date, default = datetime.datetime.now())
     updated_at = db.Column(db.Date, default = datetime.datetime.now())
 
@@ -73,10 +88,10 @@ class ChannelMessage(db.Model):
         return {
             'id': self.id,
             'serverId': self.channel.server_id,
-            'channelId': self.channel_id,
             'senderId': self.sender_id,
             'senderUsername':self.sender.username,
-            'senderProfilePicture':self.sender.profile_pic,
+            'senderProfilePic':self.sender.profile_pic,
+            'channelId': self.channel_id,
             'content': self.content,
             'createdAt': self.created_at,
             'updatedAt': self.updated_at
@@ -85,9 +100,9 @@ class ChannelMessage(db.Model):
         return {
             'id': self.id,
             'serverId': self.channel.server_id,
-            'channelId': self.channel_id,
             'senderId': self.sender_id,
             'senderUsername':self.sender.username,
-            'senderProfilePicture':self.sender.profile_pic,
+            'senderProfilePic':self.sender.profile_pic,
+            'channelId': self.channel_id,
             'content': self.content,
         }

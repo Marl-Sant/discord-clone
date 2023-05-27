@@ -1,8 +1,8 @@
 """test
 
-Revision ID: 8c2c82c2459f
+Revision ID: ed5b9d7c23e4
 Revises: 
-Create Date: 2023-05-25 21:57:31.629679
+Create Date: 2023-05-26 21:54:15.229891
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8c2c82c2459f'
+revision = 'ed5b9d7c23e4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -32,13 +32,13 @@ def upgrade():
     )
     op.create_table('servers',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('created_by', sa.Integer(), nullable=False),
-    sa.Column('icon', sa.String(length=255), nullable=True),
     sa.Column('name', sa.String(length=70), nullable=False),
+    sa.Column('server_icon', sa.String(length=255), nullable=True),
     sa.Column('description', sa.String(length=255), nullable=True),
+    sa.Column('owner_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.Date(), nullable=True),
     sa.Column('updated_at', sa.Date(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['owner_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('channels',
@@ -77,8 +77,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('channel_id', sa.Integer(), nullable=True),
     sa.Column('sender_id', sa.Integer(), nullable=False),
-    sa.Column('content', sa.String(length=2000), nullable=False),
-    sa.Column('picture', sa.String(length=2000), nullable=True),
+    sa.Column('content', sa.String(length=1500), nullable=False),
+    sa.Column('picture', sa.String(length=2500), nullable=True),
     sa.Column('created_at', sa.Date(), nullable=True),
     sa.Column('updated_at', sa.Date(), nullable=True),
     sa.ForeignKeyConstraint(['channel_id'], ['channels.id'], ),

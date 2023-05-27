@@ -20,15 +20,15 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.Date, default = datetime.datetime.now())
     updated_at = db.Column(db.Date, default = datetime.datetime.now())
 
+
     user_servers = db.relationship('Server', backref='owner',cascade="all, delete")
-
+    user_channels = db.relationship('Channel', backref='owner', cascade='all, delete')
     server_members = db.relationship('ServerMember', backref='member')
-
     channel_members = db.relationship('ChannelMember', backref='member')
-
     channel_messages = db.relationship('ChannelMessage', backref='sender',cascade="all, delete")
 
-    user_channels = db.relationship('Channel', backref='owner', cascade='all, delete')
+
+
 
     @property
     def password(self):
@@ -47,9 +47,9 @@ class User(db.Model, UserMixin):
         'username': self.username,
         'email':self.email,
         'profilePic': self.profile_pic,
-        'userServers': {server.id: server.to_alt_dict() for server in self.user_servers},
+        'userServers': {server.id: server.to_socket_dict() for server in self.user_servers},
         'serverMembers': {member.id: member.to_dict() for member in self.server_members},
-        'channelMembers': {room.id: room.channel.to_dict() for room in self.channel_members},
+        'channelMembers': {room.id: room.channel.to_dict() for room in self.channel_members}
     }
 
     def to_resource_dict(self):

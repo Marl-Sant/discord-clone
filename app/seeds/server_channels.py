@@ -3,26 +3,27 @@ from app.models import db, Server, Channel, ChannelMessage, SCHEMA, environment
 from sqlalchemy.sql import text, func
 
 def seed_channels():
+    # ---- creating channels for several servers ID 1 - 5
     channels = [
     {
-        'name': 'Test',
+        'name': 'General Chat',
         'server_id': 1
     },
     {
-        'name': 'AppAcademy',
+        'name': 'Video Games Channel',
         'server_id': 1
     },
     {
-        'name': 'projects',
-        'server_id': 1
-    },
-    {
-        'name': "General",
+        'name': 'General Chat',
         'server_id': 2
     },
     {
-        'name': 'The boys',
+        'name': "Comics Channel",
         'server_id': 2
+    },
+    {
+        'name': 'General Chat',
+        'server_id': 3
     }
     ]
     for channel in channels:
@@ -30,37 +31,29 @@ def seed_channels():
         db.session.add(new_channel)
 
 
-def seed_dm():
-    dms = [{'dm_channel':True, 'owner_id': 2}]
+def seed_dm_channels():
+    # --- creating dm channels IDs 6 - 8
+    dms = [{'dm_channel':True, 'owner_id': 1}, {'dm_channel':True, 'owner_id': 2}, {'dm_channel':True, 'owner_id': 3}]
     for dm in dms:
         new_dm = Channel(owner_id=dm['owner_id'], dm_channel=dm['dm_channel'])
+        print(new_dm, "!@#!##!##!#!#!#!@#@")
         db.session.add(new_dm)
         db.session.commit()
 
 def seed_channel_messages():
     # i === channels
-    for i in range(1, 2):
+    for i in range(1, 8):
         channel = Channel.query.get(i)
-        if channel.name == 'Test':
+        print(channel)
+        if channel.name == 'General Chat':
             message = ChannelMessage(channel_id=i, sender_id=1, content=f'Welcome to {channel.server.name}\'s Server')
             db.session.add(message)
-        else:
-            message = ChannelMessage(channel_id=i, sender_id=1, content=f'Welcome to {channel.server.name}\'s Channel {channel.name}')
+        elif channel.dm_channel == True:
+            message = ChannelMessage(channel_id=i, sender_id=4, content=f'Welcome to Direct Messages Channel')
             db.session.add(message)
-        #  x === users
-        for x in range(2, 4):
-                # users 2-3 channels 1-3
-            if x < 4 and i < 2:
-                message = ChannelMessage(channel_id=i, sender_id=x, content='test')
-                db.session.add(message)
-                # users 9 - 13 channels 4-6
-            # elif (x >= 9 and x < 14) and i <= 6 and i > 3:
-            #     message = ChannelMessage(channel_id=i, sender_id=x, content='test')
-            #     db.session.add(message)
-            #     # users 13 - 18  channels 7-9
-            # elif (x > 13 and x < 19) and i <= 9 and i > 6:
-            #     message = ChannelMessage(channel_id=i, sender_id=x, content='test')
-            #     db.session.add(message)
+        else:
+            message = ChannelMessage(channel_id=i, sender_id=2, content=f'Welcome to {channel.server.name}\'s Channel {channel.name}')
+            db.session.add(message)
 
     db.session.add(channel)
     db.session.commit()

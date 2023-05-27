@@ -5,69 +5,74 @@ from sqlalchemy.sql.expression import func
 
 def seed_servers():
     server1 = Server(
-        name = 'TEST',
-        icon = 'Example.jpg',
-        description = 'Hello Welcome',
-        created_by = 1
+        name = 'Video Games',
+        server_icon = 'TEST.jpg',
+        description = 'Server about Video Games',
+        owner_id = 1
     )
     server2 = Server(
-        name = 'App Academy',
-        icon = 'TEST.jpg',
-        description = 'Have Fun',
-        created_by = 2
+        name = 'Movies',
+        server_icon = 'TEST.jpg',
+        description = 'Server about Movies',
+        owner_id = 2
+    )
+    server3 = Server(
+        name = 'General Server',
+        server_icon = 'TEST.jpg',
+        description = 'Server about Generals',
+        owner_id = 3
     )
 
     db.session.add(server1)
     db.session.add(server2)
+    db.session.add(server3)
     db.session.commit()
 
 def seed_server_members():
-    for i in range(1, 1):
-        members = ServerMember(
-            user_id = i,
-            server_id = 1
-        )
-        db.session.add(members)
-        db.session.commit()
+    for i in range(1 ,3):
+        for j in range(1, 6):
+            members = ServerMember(
+                user_id = j,
+                server_id = i
+            )
+            db.session.add(members)
+            db.session.commit()
 
-    for j in range(1,5):
-        print(j, "______J LOOOP__________")
-        random_user_id = db.session.query(User.id).order_by(func.random()).first()[0]
-        print(random_user_id, "______RANDOM______")
-        seed_server = Server(
-            name=f'Server {j}',
-            created_by = random_user_id
-        )
-        db.session.add(seed_server)
-        db.session.commit()
+    # for k in range(1, 5):
+    #     random_user_id = db.session.query(User.id).order_by(func.random()).first()[0]
+    #     seed_server = Server(
+    #         name=f'Server {k}',
+    #         created_by = random_user_id
+    #     )
+    #     db.session.add(seed_server)
+    #     db.session.commit()
 
-        member1 = ServerMember(
-            user_id = 1,
-            server_id = j
-        )
-        print(member1, "_____MEMBER1")
-        member2 = ServerMember(
-            user_id = 2,
-            server_id = j
-        )
-        member3 = ServerMember(
-            user_id = 3,
-            server_id = j
-        )
-        member4 = ServerMember(
-            user_id = 4,
-            server_id = j
-        )
-        member5 = ServerMember(
-            user_id = 5,
-            server_id = j
-        )
-        db.session.add(member1)
-        db.session.add(member2)
-        db.session.add(member3)
-        db.session.add(member4)
-        db.session.add(member5)
-        db.session.commit()
+    #     member1 = ServerMember(
+    #         user_id = 1,
+    #         server_id = k
+    #     )
+    #     member2 = ServerMember(
+    #         user_id = 2,
+    #         server_id = k
+    #     )
+    #     member3 = ServerMember(
+    #         user_id = 3,
+    #         server_id = k
+    #     )
+    #     member4 = ServerMember(
+    #         user_id = 4,
+    #         server_id = k
+    #     )
+    #     member5 = ServerMember(
+    #         user_id = 5,
+    #         server_id = j
+    #     )
+    #     db.session.add(member1)
+    #     db.session.add(member2)
+    #     db.session.add(member3)
+    #     db.session.add(member4)
+    #     db.session.add(member5)
+    #     db.session.commit()
 
 
 def undo_servers():

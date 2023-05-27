@@ -1,7 +1,7 @@
 from flask.cli import AppGroup
 from .users import seed_users, undo_users
 from .servers import seed_servers, undo_servers, seed_server_members, undo_server_members
-from .server_channels import seed_channels, undo_channels, seed_channel_messages, seed_dm
+from .server_channels import seed_channels, undo_channels, seed_channel_messages, seed_dm_channels
 from .channel_members import seed_channel_members, undo_channel_members
 
 
@@ -31,8 +31,8 @@ def seed():
     seed_server_members()
     seed_channels()
     seed_channel_members()
+    seed_dm_channels()
     seed_channel_messages()
-    seed_dm()
 
     # Add other seed functions here
 
