@@ -18,7 +18,7 @@ def get_all_servers():
 @servers_routes.route('/<int:id>')
 @login_required
 def get_a_server(id):
-    server = db.session.query(Server).get(id)
+    server = Server.query.get(id)
 
     return {"server": {server.id: server.to_dict()}}
 
@@ -152,3 +152,58 @@ def delete_a_server_member(server_id, member_id):
     db.session.commit()
     
     return {'serverMemberId': server_member.id, 'serverId': general_chat.server.id}
+
+# - get all server channels
+@servers_routes.route('/<int:id>/channels')
+def get_all_channels(id):
+    # find all the channels associated with the server id passed in
+    server_channels = Channel.query.filter_by(server_id = id).all()
+
+    return {'channels': {channel.id: channel.to_socket_dict() for channel in server_channels}}
+
+# - get a server channel
+@servers_routes.route('/<int:server_id>/channels/<int:channel_id>')
+def get_a_channel(server_id, channel_id):
+    channel = Channel.query.get(channel_id)
+
+    return channel.to_dict()
+
+# -  create a server channel
+@servers_routes.route('/<int:id>/channels', methods=["POST"])
+def create_new_channel(id):
+    # grab the information from the request with new server info
+    data = request.json
+    # make a new channel with the information provided
+    channel = Channel(name=data['name'], server_id=data['serverId'])
+    db.session.add(channel)
+    db.session.commit()
+
+    # create a welcome message to the new channel
+    welcome_message = ChannelMessage(channel_id=channel.id,sender_id=channel.server.owner_id,content=f'Welcome to {channel.server.name}\'s channel {channel.name}')
+    db.session.add(welcome_message)
+    db.session.commit()
+
+    return channel.to_dict()
+
+# - update a channel
+@servers_routes.route('/<int:server_id>/channels/<int:channel_id>', methods=['PUT'])
+def edit_a_channel(server_id, channel_id):
+    # grab the channel you would like to edit
+    channel = Channel.query.get(channel_id)
+
+    # grab the information from the request with new server info
+    data = request.json
+    name = data['name']
+
+    channel.name = name
+    db.session.commit()
+    return channel.to_dict()
+
+@servers_routes.route('/<int:server_id>/channels/<int:channel_id>', methods=['DELETE'])
+def delete_a_channel(server_id, channel_id):
+    # grab the channel you would like to delete
+    channel = Channel.query.get(channel_id)
+
+    db.session.delete(channel)
+    db.session.commit()
+    return{'channelId': channel.id}
