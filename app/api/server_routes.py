@@ -1,3 +1,4 @@
+# - need changes
 from flask import Blueprint, jsonify, session, request
 from flask_login import current_user, login_required
 from app.models import User, Server, ServerMember, Channel, ChannelMessage, db
@@ -6,42 +7,42 @@ from .auth_routes import validation_errors_to_error_messages
 servers_routes = Blueprint('servers', __name__)
 
 
-# - getting all servers
+# - all get routes for server
 @servers_routes.route('')
 @login_required
 def get_all_servers():
     servers= db.session.query(Server).all()
 
-    return {'servers':{server.id: server.to_socket_dict() for server in servers}}
+    return {'servers':{server.id: server.to_dict() for server in servers}}
 
-# - getting a server
 @servers_routes.route('/<int:id>')
 @login_required
 def get_a_server(id):
     server = Server.query.get(id)
 
-    return {"server": {server.id: server.to_dict()}}
+    return server.to_dict()
 
 # - creating a new server
 @servers_routes.route('', methods=['POST'])
 @login_required
 def create_a_server():
-    ## - creating the server with the data from the request form and using the currently logged in user
+    ## - 1 -creating the server with the data from the request form and 
+    ## - using the currently logged in user
+    ## - 2 -adding the currently logged in user as the first member 
+    ## - of the created server
+    ## - 3 -creating the first channel with the defaulted 
+    ##- name of General Chat
+    ## - 4 - creating the welcome message that is displayed on the General Chat
+    ## - 5 -creating the welcome message that is displayed on the General Chat
     server = Server(owner_id=current_user.id, name=request.form['name'])
     db.session.add(server)
     db.session.commit()
-
-    ## - adding the currently logged in user as the first member of the created server
     owner = ServerMember(server_id=server.id, user_id=server.owner_id)
     db.session.add(owner)
     db.session.commit()
-
-    ## - creating the first channel with the defaulted name of General Chat
     generalChat = Channel(name="General Chat", server_id=server.id)
     db.session.add(generalChat)
     db.session.commit()
-
-    ## - creating the welcome message that is displayed on the General Chat
     welcome_message = ChannelMessage(channel_id=generalChat.id, sender_id=current_user.id, content=f'Hey! Welcome to the {server.name} server')
     db.session.add(welcome_message)
     db.session.commit()
@@ -53,25 +54,29 @@ def create_a_server():
 @login_required
 def update_a_server(id):
 
-    # - finding the server by the id we would like to update using the integer in the url 
+    # - 1 - finding the server by the id we would like to update using the 
+    # - integer in the url 
+    # - 2 - grabbing the general chat associated with the found server and all 
+    # - existing information for the record
+    # - 3 - grabbing the welcome message on the General Chat of the server
+    # - grabbing the name from the update form that we will be 
+    #- 4 - takeing information from. this form will be prepopulated with the 
+    # - current name of the server
+    # - 5 -using the name from the form to provide the new welcome message
+    # - 6 -renaming the server
+    # - 7 -saving the new updated server
     server = Server.query.get(id)
 
-    # - grabbing the general chat associated with the found server and all existing information for the record
     general_chat = Channel.query.get(server.channels[0].id)
 
-    # - grabbing the welcome message on the General Chat of the server
     welcome_message = ChannelMessage.query.filter_by(channel_id=general_chat.id).filter_by(sender_id=current_user.id).first()
 
-    # - grabbing the name from the update form that we will be takeing information from. this form will be prepopulated with the current name of the server
     name = request.form['name']
 
-    # - using the name from the form to provide the new welcome message
     welcome_message.content = f'Welcome to {name}\'s Server'
 
-    # - renaming the server
     server.name = request.form['name']
 
-    # - saving the new updated server
     db.session.commit()
 
     return server.to_dict()
@@ -81,10 +86,10 @@ def update_a_server(id):
 @login_required
 def delete_a_server(id):
     
-    # - finding the server by the id we would like to delete using the integer in the url 
+    # - finding the server by the id we would like to delete using 
+    # - the integer in the url then deleteing the selected server
     server = Server.query.get(id)
 
-    # - deleteing the selected server
     db.session.delete(server)
 
     db.session.commit()
@@ -114,22 +119,23 @@ def get_a_server_member(id):
 @servers_routes.route('/<int:id>/members', methods=['POST'])
 @login_required
 def create_new_server_member(id):
-
+    # - 1 - using the information in the request, we will be creating the 
+    # - new member
+    # - 2 - grabbing information about the user that will join the server
+    # - adding that user to the server
+    # - 3 - sending message on General Chat welcoming the new member
     server = Server.query.get(id)
-    
-    # - using the information in the request, we will be creating the new member
     data = request.json
 
-    # - grabbing information about the user that will join the server
+    
+
     new_member= User.query.get(data['userId'])
 
-    # - adding that user to the server
     added_member = ServerMember(server_id=id, user_id=data['userId'])
 
     db.session.add(added_member)
 
-    # - sending message on General Chat welcoming the new member
-    general_chat = Channel.query.filter_by(server_id=id).first()
+    general_chat = Channel.query.filter_by(server_id=data['serverId']).first()
     welcome_message = ChannelMessage(channel_id=general_chat.id,sender_id=server.owner_id,content=f'Everyone welcome {new_member.username} to the server!')
     db.session.add(welcome_message)
     db.session.commit()
@@ -141,11 +147,10 @@ def create_new_server_member(id):
 @login_required
 def delete_a_server_member(server_id, member_id):
 
-    # - find the server member that wants to leave
+    # - find the server member that wants to leave and say goodbye
     server_member = ServerMember.query.get(member_id)
     db.session.delete(server_member)
 
-    # - bid the user adieu with a nice message
     general_chat = Channel.query.filter_by(server_id=server_id).first()
     goodbye_message = ChannelMessage(channel_id=general_chat.id,sender_id=general_chat.server.owner_id,content=f'Everyone say goodbye to {server_member.member.username}!')
     db.session.add(goodbye_message)
@@ -156,6 +161,7 @@ def delete_a_server_member(server_id, member_id):
 # - get all server channels
 @servers_routes.route('/<int:id>/channels')
 def get_all_channels(id):
+
     # find all the channels associated with the server id passed in
     server_channels = Channel.query.filter_by(server_id = id).all()
 
@@ -171,14 +177,14 @@ def get_a_channel(server_id, channel_id):
 # -  create a server channel
 @servers_routes.route('/<int:id>/channels', methods=["POST"])
 def create_new_channel(id):
-    # grab the information from the request with new server info
+    # - 1 -grab the information from the request with new server info
+    # - 2 -make a new channel with the information provided
+    # - 3 -create a welcome message to the new channel
     data = request.json
-    # make a new channel with the information provided
     channel = Channel(name=data['name'], server_id=data['serverId'])
     db.session.add(channel)
     db.session.commit()
 
-    # create a welcome message to the new channel
     welcome_message = ChannelMessage(channel_id=channel.id,sender_id=channel.server.owner_id,content=f'Welcome to {channel.server.name}\'s channel {channel.name}')
     db.session.add(welcome_message)
     db.session.commit()
@@ -188,10 +194,10 @@ def create_new_channel(id):
 # - update a channel
 @servers_routes.route('/<int:server_id>/channels/<int:channel_id>', methods=['PUT'])
 def edit_a_channel(server_id, channel_id):
-    # grab the channel you would like to edit
+    # - 1 - grab the channel you would like to edit
+    # - 2 - grab the information from the request with new server info
     channel = Channel.query.get(channel_id)
 
-    # grab the information from the request with new server info
     data = request.json
     name = data['name']
 

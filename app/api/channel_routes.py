@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from app.models import User, Channel, ChannelMessage, ChannelMember, db
 from .auth_routes import validation_errors_to_error_messages
 
-channel_routes = Blueprint('channels', __name__, url_prefix='channels')
+channel_routes = Blueprint('channels', __name__)
 
 ## THESE MAY NOT BE NECESSARY
 # get one channel

@@ -22,7 +22,7 @@ class Server(db.Model):
     created_at = db.Column(db.Date, default = datetime.datetime.now())
     updated_at = db.Column(db.Date, default = datetime.datetime.now())
 
-    members = db.relationship('ServerMember', cascade='all, delete-orphan', backref='server')
+    members = db.relationship('ServerMember', backref='server', cascade='all, delete-orphan')
     channels = db.relationship('Channel', backref='server', cascade="all,delete-orphan")
 
 
