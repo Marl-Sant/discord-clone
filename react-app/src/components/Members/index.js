@@ -43,7 +43,7 @@ const Members = () => {
   const currentServerMembers = useSelector(
     (state) => state.serversReducer?.currentServer.members
   );
-  console.log(currentServerMembers);
+
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {

@@ -1,4 +1,5 @@
 import "./SelectedChannel.css";
+import Messages from "../Messages";
 import { useSelector } from "react-redux";
 import { postMessage } from "../../store/channel";
 import { useDispatch } from "react-redux";
@@ -25,6 +26,7 @@ const SelectedChannel = () => {
   return (
     <>
     <h1>CURRENT CHANNEL</h1>
+    {currentChannel?.messages && <Messages messages={messages} />}
     </>
   );
 };
