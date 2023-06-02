@@ -1,7 +1,7 @@
 import "./SelectedChannel.css";
 import Messages from "../Messages";
+import MessageInput from "../MessageInput";
 import { useSelector } from "react-redux";
-import { postMessage } from "../../store/channel";
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 // maybe pass in an object from SelectedServer?
@@ -27,6 +27,8 @@ const SelectedChannel = () => {
     <>
     <h1>CURRENT CHANNEL</h1>
     {currentChannel?.messages && <Messages messages={messages} />}
+
+    <MessageInput className="chat_input" />
     </>
   );
 };

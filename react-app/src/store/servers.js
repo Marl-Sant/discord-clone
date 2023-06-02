@@ -46,7 +46,8 @@ export const joinUserServer = (serverId, userId) => async (dispatch) => {
   };
 
   export const postUserServer = (formData) => async (dispatch) => {
-      const res = await fetch("/api/servers/", {
+    
+      const res = await fetch("/api/servers", {
         method: "POST",
         body: formData,
       });

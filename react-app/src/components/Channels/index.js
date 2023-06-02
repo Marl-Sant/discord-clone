@@ -60,8 +60,7 @@ const Channels = () => {
                     >
                         {((ownerId === user.id && currentChannelId * 1 === channel.id) ||
                             (ownerId === user.id && hoverId === channel.id)) &&
-                            channel.name !== "General Chat" &&
-                            !channelsObj.currentChannel.dmChannel && (
+                            channel.name !== "General Chat" &&(
                                 <div className="channel_right">
                                 </div>
                             )}

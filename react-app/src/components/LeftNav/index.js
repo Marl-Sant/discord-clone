@@ -1,7 +1,7 @@
 import "./LeftNav.css";
 import Servers from "../Servers";
 import { NavLink } from "react-router-dom";
-
+import  CreateNewServerModal from "../CreateNewServer/CreateNewServerModal"
 import { useSelector, useDispatch } from "react-redux";
 import { getAChannel } from "../../store/channel";
 
@@ -31,7 +31,7 @@ const LeftNav = () => {
         <Servers
           userServers={userServers}
         ></Servers>
-        {/* <CreateServerModal></CreateServerModal> */}
+        <CreateNewServerModal></CreateNewServerModal>
       </div>
     )
   );
