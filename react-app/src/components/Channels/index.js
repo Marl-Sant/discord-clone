@@ -18,9 +18,13 @@ const Channels = () => {
     const currentServer = useSelector((state) => state.serversReducer.currentServer);
     const channelsObj = useSelector((state) => state.serversReducer.currentServer.channels);
     const dispatch = useDispatch();
+    const [loaded, setLoaded] = useState(false);
     useEffect(() => {
+        if(channelsObj){
         setOwnerId(currentServer?.owner?.id);
         setChannels(Object.values(channelsObj))
+        setLoaded(true)
+        }
     }, [
         dispatch,
         currentServer,
@@ -35,6 +39,7 @@ const Channels = () => {
         );
     };
     return (
+        loaded && (
         <div className="channels">
             <div className="channels_header">
                 <h1>ALL CHANNELS</h1>
@@ -53,33 +58,11 @@ const Channels = () => {
                         onMouseEnter={() => setHoverId(channel.id)}
                         onMouseLeave={() => setHoverId(null)}
                     >
-                        {/* <div className="channel_left">
-              <img
-                className={`${dmRoomsView && "direct_message_icon"}`}
-                src={
-                  dmRoomsView
-                    ? Object.keys(channel?.members).length > 2
-                      ? "/svgs/group-message-ico.svg"
-                      : Object.values(channel.members)[0]?.profilePicture
-                    : "/svgs/pound.svg"
-                }
-                alt="#"
-              />
-              {" "}
-              {dmRoomsView ? (
-                Object.values(channel.members).map((member) => (
-                  <p key={member.id}>{member.username}</p>
-                ))
-                ) : (
-                    )}
-                </div> */}
                         {((ownerId === user.id && currentChannelId * 1 === channel.id) ||
                             (ownerId === user.id && hoverId === channel.id)) &&
                             channel.name !== "General Chat" &&
                             !channelsObj.currentChannel.dmChannel && (
                                 <div className="channel_right">
-                                    {/* <img src="/svgs/addMemb.svg" alt="add" /> */}
-                                    {/* <EditChannelModal channel={channel} user={user} /> */}
                                 </div>
                             )}
                             <p>{channel.name}</p>
@@ -87,6 +70,7 @@ const Channels = () => {
                 </NavLink>
             ))}
         </div>
+        )
     );
 };
 
