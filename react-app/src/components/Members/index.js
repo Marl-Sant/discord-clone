@@ -41,19 +41,18 @@ const Members = () => {
   const dispatch = useDispatch()
   const currentChannel = useSelector((state) => state.channelsReducer?.currentChannel);
   const currentServerMembers = useSelector(
-    (state) => state.serversReducer?.currentServer.members
+    (state) => state.serversReducer?.currentServer?.members
   );
 
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    setLoaded(false);
     if (currentChannel) {
       setLoaded(true);
     }
   }, [dispatch, currentChannel]);
 
-  if (loaded) {
+  if (loaded && currentServerMembers) {
     return (
       <div className="members_list">
         {Object.values(currentServerMembers)?.map((member) => (

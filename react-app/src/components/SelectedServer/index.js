@@ -1,5 +1,6 @@
 import Members from "../Members";
 import SelectedChannel from '../SelectedChannel'
+import Channels from "../Channels";
 import { useState, useEffect, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useLocation, Redirect } from "react-router-dom";
@@ -36,6 +37,11 @@ const SelectedServer = () => {
       return (
         loaded && (
           <div>
+            <div className="channels_container">
+            {channelLoaded && (
+              <Channels channels={channelsObj} className="channels" />
+            )}
+          </div>
           <div className="one_channel">
           {channelLoaded && (
             <SelectedChannel channelsObj={channelsObj} className="one_channel" />
