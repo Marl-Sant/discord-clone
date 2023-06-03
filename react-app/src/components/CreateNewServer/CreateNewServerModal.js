@@ -11,7 +11,6 @@ const CreateNewServerModal = () => {
         buttonText="Create a Server"
         modalComponent={<CreateNewServer />}
       />
-
     </>
   );
 };

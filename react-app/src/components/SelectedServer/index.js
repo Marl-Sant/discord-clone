@@ -1,6 +1,7 @@
 import Members from "../Members";
 import SelectedChannel from '../SelectedChannel'
 import Channels from "../Channels";
+import EditAServerModal from "../EditAServer/EditAServerModal";
 import { useState, useEffect, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useLocation, Redirect } from "react-router-dom";
@@ -58,6 +59,7 @@ const SelectedServer = () => {
                   />
                 )}
               </div>
+              <EditAServerModal/>
           </div>
         )
       );

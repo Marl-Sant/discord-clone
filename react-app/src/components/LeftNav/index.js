@@ -31,7 +31,7 @@ const LeftNav = () => {
         <Servers
           userServers={userServers}
         ></Servers>
-        <CreateNewServerModal></CreateNewServerModal>
+        <CreateNewServerModal/>
       </div>
     )
   );
